@@ -1,0 +1,42 @@
+<div id="wrapper">
+    <div class="content">
+        <div class="container">
+            <%- include('../partials/header.ejs') %>
+            <%- include('../partials/errormessage.ejs') %>
+        </div>
+        <%- include('../partials/dashboard.ejs') %>
+        <div>
+            <div class="row">
+                <div style="width: 30%; margin: 25px auto;">
+                    <div>
+                        <label>Name: <%=detail.name%></label>
+                        <label>Username: <%=profile.username%></label>
+                        <label>Blood Group: <%=detail.blood%></label>
+                        <label>Phone: <%=detail.phone%></label>;
+                    </div>
+                    <a href="/">Go Back</a>
+                    <div>
+                        <% if(requests.length>0) { %>
+                            <h3>Your Requests: </h3>
+                            <% requests.forEach(request => { %>
+                                <div class="mard mt-4">
+                                    <div class="card-body row">
+                                        <div class="col-sm-6">
+                                            <%= request.userName %>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <form action="/profile/<%=request.id%>?_method=DELETE" method="POST">
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer.ejs') %>
+        </div>
+</div>

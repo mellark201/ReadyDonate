@@ -1,0 +1,11 @@
+.dashboard {
+    align-content: flex-start;
+}
+
+.activity {
+    float: right;
+    margin-right: 2rem;
+    background-color:#111;
+    text-align: center;
+    width: 20%;
+}

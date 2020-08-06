@@ -1,0 +1,114 @@
+<div id="wrapper">
+    <div class="content">
+        <div class="container">
+            <%- include('./partials/header.ejs') %>
+            <%- include('./partials/errormessage.ejs') %>
+        </div>
+        <%- include('./partials/dashboard.ejs') %>
+        <div class="activity">
+            <h3>Nearby Requests</h3>
+            <h6>Please Click on the Map to View Nearby Requests</h6>
+            <div class="nearby" id="query"></div>
+        </div>
+        <%- include('./partials/footer.ejs') %>
+    </div>
+    <div class="background" id="map">
+    </div>
+</div>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoibWVsbGFyazIwMSIsImEiOiJja2RobnMxdTEyaDd2MzNyeHZpbHQwM3d5In0.NR10O_dsJkAP-RE73y7W8w';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/dark-v10',
+        center: [80.0982,23.0707 ],
+        zoom: 4
+    });
+
+    map.addControl(
+		new mapboxgl.GeolocateControl({
+			positionOptions: {
+				enableHighAccuracy: true
+			},
+				trackUserLocation: true
+			})
+		);
+
+    function distance(currLat, lat, currLng, lng)
+    {
+        var answer = Math.acos((Math.sin(currLat)*Math.sin(lat) + Math.cos(lat)*Math.cos(currLat)*Math.cos(currLng - lng)));
+        answer = answer * 3963;
+        return answer;
+    }
+
+    // map.addControl(
+    //     new MapboxGeocoder({
+    //     accessToken: mapboxgl.accessToken,
+    //     mapboxgl: mapboxgl
+    //     })
+    // );
+
+    map.on('mousedown', function(e) {
+            var currLat = e.lngLat.lat/57.3;
+            var currLng = e.lngLat.lng/57.3;
+            var arr=[];
+            var i=0;
+            <% requests.forEach(request => { %>
+                var lat = <%=request.latitude%>/57.3
+                var lng = <%=request.longitude%>/57.3
+                var dist = distance(lat, currLat, lng, currLng)
+                var obj = {distance: dist, index : i};
+                arr.push(obj);
+                i++;
+            <% }) %>
+            arr.sort((a, b) => {
+                return a.distance - b.distance
+            })
+            var loca = document.getElementById('query');
+            while(loca.firstChild) {
+                loca.removeChild(loca.firstChild);
+                console.log('removed');
+            }
+            for(i=0; i<2; i++)
+            {
+                var temp = 0;
+                <% requests.forEach(request => { %>
+                    if(temp==arr[i].index)
+                    {
+                        var par = document.createElement('div');
+                        var quant = document.createElement('div');
+                        quant.innerText = <%= request.quantity %> + ' units of <%= request.group %>';
+                        par.appendChild(quant);
+                        quant = document.createElement('div');
+                        quant.innerText = '<%= request.userName %>';
+                        par.appendChild(quant);
+                        document.getElementById('query').appendChild(par);
+                    }
+                    temp++;
+                <% }) %>
+            }
+        });
+
+    <% requests.forEach(request => { %>
+        var temp = '<h5><%=request.quantity%> units of <%=request.group%></h5><p><strong>Reason: </strong><%= request.cause %></p><p><strong>Hospital: </strong><%= request.hospital %></p><p><strong>Requested By: </strong><%= request.userName %></p><p><strong>Contact: </strong><%= request.contact %></p>'
+        var marker = new mapboxgl.Marker({color: 'red'})
+            .setLngLat([<%= request.longitude %>, <%= request.latitude %>])
+            .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+                .setHTML(temp))
+            .addTo(map);
+    <% }) %>
+</script>
+<!-- <script>
+	// TO MAKE THE MAP APPEAR YOU MUST
+	// ADD YOUR ACCESS TOKEN FROM
+	// https://account.mapbox.com
+	mapboxgl.accessToken = 'pk.eyJ1IjoibWVsbGFyazIwMSIsImEiOiJja2RobnMxdTEyaDd2MzNyeHZpbHQwM3d5In0.NR10O_dsJkAP-RE73y7W8w';
+var map = new mapboxgl.Map({
+container: 'map',
+style: 'mapbox://styles/mapbox/streets-v11',
+center: [-79.4512, 43.6568],
+zoom: 13
+});
+ 
+var geocoder = new MapboxGeocoder({ accessToken: mapboxgl.accessToken });
+map.addControl(geocoder);
+</script> -->

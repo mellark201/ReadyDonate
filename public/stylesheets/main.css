@@ -1,0 +1,36 @@
+@import 'shared/footer.css';
+@import 'shared/header.css';
+@import 'shared/dashboard.css';
+@import 'shared/index.css';
+
+.container {
+    max-width: 1400px;
+    margin: auto;
+    margin-bottom: 3rem;
+}
+
+.index-container {
+    max-width: 100%;
+    margin: auto;
+}
+
+.inline-div {
+    display: inline-flex;
+}
+
+.content{
+    color: #FFFFFF;
+    font-size: 26px;
+    font-weight: bold;
+    text-shadow: -1px -1px 1px #000, 1px 1px 1px #000;
+    position: relative;
+    z-index: 100;
+}
+
+.background{
+    color: #999999;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -100;
+}
